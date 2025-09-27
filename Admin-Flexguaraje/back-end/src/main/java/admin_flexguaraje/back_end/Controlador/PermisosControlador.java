@@ -4,7 +4,6 @@ import admin_flexguaraje.back_end.Modelo.Permisos;
 import admin_flexguaraje.back_end.Modelo.Roles;
 import admin_flexguaraje.back_end.Negocio.PermisosNegocio;
 import admin_flexguaraje.back_end.Negocio.RolesNegocio;
-import admin_flexguaraje.back_end.Repositorio.RolesRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +39,6 @@ public class PermisosControlador {
     public ResponseEntity<String> crearPermiso(@RequestBody Map<String, Object> body) {
         String nombreRol = (String) body.get("nombreRol");
         String nombrePermiso = (String) body.get("nombrePermiso");
-
         // Convertir los valores a mayúsculas
         nombreRol = nombreRol != null ? nombreRol.toUpperCase() : null;
         nombrePermiso = nombrePermiso != null ? nombrePermiso.toUpperCase() : null;
@@ -78,14 +76,12 @@ public class PermisosControlador {
     public ResponseEntity<String> actualizarNombrePermiso(@RequestBody Map<String, Object> body) {
         String idPermisoStr = String.valueOf(body.get("idPermiso"));
         String nuevoNombre = (String) body.get("nuevoNombre");
-
         // Validación para idPermiso (solo numérico)
         if (idPermisoStr == null || !idPermisoStr.matches("[0-9]+")) {
             return ResponseEntity.badRequest().body("El idPermiso debe ser un número válido.");
         }
 
         Long idPermiso = Long.valueOf(idPermisoStr);
-
         // Convertir el nuevo nombre a mayúsculas
         nuevoNombre = nuevoNombre != null ? nuevoNombre.toUpperCase() : null;
 
@@ -118,19 +114,16 @@ public class PermisosControlador {
         }
     }
 
-
     // Actualizar estado de permiso
     @PutMapping("/actualizar_estado_permiso")
     public ResponseEntity<String> actualizarEstadoPermiso(@RequestBody Map<String, Object> body) {
         String idPermisoStr = String.valueOf(body.get("idPermiso"));
-
         // Validación para idPermiso (solo numérico)
         if (idPermisoStr == null || !idPermisoStr.matches("[0-9]+")) {
             return ResponseEntity.badRequest().body("El idPermiso debe ser un número válido.");
         }
 
         Long idPermiso = Long.valueOf(idPermisoStr);
-
         // Verificar si el permiso existe
         if (!permisosNegocio.existePermiso(idPermiso)) {
             return ResponseEntity.badRequest().body("El permiso con el ID " + idPermiso + " no existe.");
@@ -148,22 +141,17 @@ public class PermisosControlador {
     public ResponseEntity<String> eliminarPermiso(@RequestBody Map<String, Object> body) {
         // Extraemos el idPermiso desde el cuerpo de la solicitud
         String idPermisoStr = String.valueOf(body.get("idPermiso"));
-
         // Validación para asegurarse de que idPermiso es numérico
         if (idPermisoStr == null || !idPermisoStr.matches("[0-9]+")) {
             return ResponseEntity.badRequest().body("El idPermiso debe ser un número válido.");
         }
 
         Long idPermiso = Long.valueOf(idPermisoStr);
-
         // Llamamos al negocio para eliminar el permiso
         String result = permisosNegocio.eliminarPermiso(idPermiso);
-
         if (result.contains("no existe")) {
             return ResponseEntity.badRequest().body("El permiso con el ID " + idPermiso + " no existe.");
         }
-
         return ResponseEntity.ok(result);
     }
-
 }

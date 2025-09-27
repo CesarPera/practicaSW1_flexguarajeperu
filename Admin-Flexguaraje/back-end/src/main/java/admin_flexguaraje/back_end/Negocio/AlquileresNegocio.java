@@ -18,18 +18,13 @@ import java.util.Optional;
 @Service
 public class AlquileresNegocio {
     @Autowired
-    private final AlquileresRepositorio AlquileresRepositorio;
+    private AlquileresRepositorio AlquileresRepositorio;
 
     @Autowired
-    public AlquileresNegocio(AlquileresRepositorio AlquileresRepositorio) {
-        this.AlquileresRepositorio = AlquileresRepositorio;
-    }
+    private EspacioRepositorio espacioRepositorio;
 
     @Autowired
-    private EspacioRepositorio espacioRepositorio; // Repositorio de la tabla Espacio
-
-    @Autowired
-    private ClienteRepositorio ClienteRepositorio; // Repositorio de la tabla Cliente
+    private ClienteRepositorio ClienteRepositorio;
 
     public boolean existeDni(String dni) {
         // Consulta en el repositorio ClienteRepositorio para verificar si el DNI existe
@@ -223,5 +218,4 @@ public class AlquileresNegocio {
         espacio.setSubestado(Espacio.SubestadoEspacio.Desactivado);
         espacioRepositorio.save(espacio);
     }
-
 }

@@ -1,6 +1,5 @@
 package admin_flexguaraje.back_end.Controlador;
 
-
 import admin_flexguaraje.back_end.Modelo.Cuenta;
 import admin_flexguaraje.back_end.Modelo.Roles;
 import admin_flexguaraje.back_end.Modelo.Usuario;
@@ -130,7 +129,6 @@ public class UsuarioControlador {
         if (dni == null || !dni.matches("\\d{8}")) {
             return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres numéricos.");
         }
-
         Optional<Usuario> usuarioExistente = usuarioNegocio.buscarUsuarioPorDni(dni);
         if (usuarioExistente.isEmpty()) {
             return ResponseEntity.status(404).body("El usuario con DNI " + dni + " no se encuentra.");
@@ -157,7 +155,6 @@ public class UsuarioControlador {
                 actualizarCorreo = true;
             }
         }
-
         if (actualizarCorreo) {
             try {
                 Cuenta cuenta = cuentaNegocio.buscarCuentaPorDni(dni);
@@ -168,7 +165,6 @@ public class UsuarioControlador {
                 // No hacer nada si la cuenta no existe
             }
         }
-
         if (body.containsKey("apellidoMaterno") && !body.get("apellidoMaterno").matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido materno solo puede contener letras.");
         }
@@ -178,7 +174,6 @@ public class UsuarioControlador {
         if (body.containsKey("telefono") && !body.get("telefono").matches("\\d{9}")) {
             return ResponseEntity.badRequest().body("El teléfono debe tener exactamente 9 caracteres numéricos.");
         }
-
         // Convertir a mayúsculas los campos que se actualizan
         if (body.containsKey("nombre")) {
             usuario.setNombre(body.get("nombre").toUpperCase());
@@ -189,10 +184,8 @@ public class UsuarioControlador {
         if (body.containsKey("apellidoMaterno")) {
             usuario.setApellidoMaterno(body.get("apellidoMaterno").toUpperCase());
         }
-
         if (body.containsKey("email")) usuario.setEmail(body.get("email"));
         if (body.containsKey("telefono")) usuario.setTelefono(body.get("telefono"));
-
         if (body.containsKey("nombreRol")) {
             String nombreRol = body.get("nombreRol").toUpperCase();
             Roles nuevoRol = new Roles();
@@ -224,5 +217,4 @@ public class UsuarioControlador {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 }

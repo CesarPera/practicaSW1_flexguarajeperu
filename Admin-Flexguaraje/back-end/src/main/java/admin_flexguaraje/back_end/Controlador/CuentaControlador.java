@@ -1,16 +1,12 @@
 package admin_flexguaraje.back_end.Controlador;
 
-
 import admin_flexguaraje.back_end.Modelo.Cuenta;
-import admin_flexguaraje.back_end.Modelo.Roles;
-import admin_flexguaraje.back_end.Modelo.Usuario;
 import admin_flexguaraje.back_end.Negocio.CuentaNegocio;
 import admin_flexguaraje.back_end.Negocio.UsuarioNegocio;
 import admin_flexguaraje.back_end.seguridad.GeneradorPassSeguro;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +26,6 @@ public class CuentaControlador {
     @GetMapping("/listar_cuentas")
     public List<Cuenta> listarCuentas() {
         return cuentaNegocio.listarCuentas();
-
     }
 
     @PostMapping("/buscar_cuenta")
@@ -54,7 +49,6 @@ public class CuentaControlador {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cuenta no encontrada: " + e.getMessage());
         }
     }
-
 
     @PostMapping("/crear_cuenta")
     public ResponseEntity<String> crearCuenta(@RequestBody Map<String, String> body) {
@@ -114,5 +108,4 @@ public class CuentaControlador {
             return ResponseEntity.badRequest().body("Error al actualizar la contraseña: " + e.getMessage());
         }
     }
-
 }

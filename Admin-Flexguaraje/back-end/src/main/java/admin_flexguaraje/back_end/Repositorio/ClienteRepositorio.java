@@ -2,12 +2,14 @@ package admin_flexguaraje.back_end.Repositorio;
 
 import admin_flexguaraje.back_end.Modelo.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface ClienteRepositorio extends JpaRepository<Cliente, Long> {
-    public Cliente findByDni(String dni);
+    Cliente findByDni(String dni);
     List<Cliente> findByNombreAndApellidoPaternoAndApellidoMaterno(String nombre, String apellidoPaterno, String apellidoMaterno);
-    public boolean existsByDni(String dni);
-    public boolean existsByEmail(String email);
+    boolean existsByDni(String dni);
+    boolean existsByEmail(String email);
 }

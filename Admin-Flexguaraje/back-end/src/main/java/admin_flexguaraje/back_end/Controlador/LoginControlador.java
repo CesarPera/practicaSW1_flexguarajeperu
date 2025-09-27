@@ -1,6 +1,5 @@
 package admin_flexguaraje.back_end.Controlador;
 
-
 import admin_flexguaraje.back_end.Modelo.Cuenta;
 import admin_flexguaraje.back_end.Negocio.LoginNegocio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +12,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/validacion")
-@CrossOrigin(origins = "http://localhost:5173")
-
 public class LoginControlador {
 
     @Autowired

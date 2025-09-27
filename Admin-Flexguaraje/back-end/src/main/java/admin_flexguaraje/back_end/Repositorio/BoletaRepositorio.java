@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-
 @Repository
 public interface BoletaRepositorio extends JpaRepository<Boleta, Long> {
     Optional<Boleta> findByCodigoBoleta(String codigoBoleta);

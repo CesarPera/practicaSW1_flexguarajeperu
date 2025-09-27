@@ -105,7 +105,6 @@ public class BoletaNegocio {
                 return false; // Si no tiene boleta asociada, retornamos false
             }
         }
-
         return true; // Si todos los alquileres tienen boletas, retornamos true
     }
 
@@ -126,7 +125,6 @@ public class BoletaNegocio {
             // Verificar si el código ya existe en la base de datos
             codigoExistente = boletaRepositorio.existsByCodigoBoleta(codigoBoleta); // Método para verificar si el código ya existe
         }
-
         return codigoBoleta; // Retorna el código único
     }
 

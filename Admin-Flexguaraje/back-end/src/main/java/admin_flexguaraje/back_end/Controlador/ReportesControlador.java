@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/reportes")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ReportesControlador {
 
     @Autowired
@@ -54,7 +54,6 @@ public class ReportesControlador {
                     request.descripcion,
                     prioridad
             );
-
             return ResponseEntity.ok(nuevoReporte);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -101,7 +100,6 @@ public class ReportesControlador {
                     prioridad,
                     estado
             );
-
             return ResponseEntity.ok(reporteActualizado);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -114,9 +112,7 @@ public class ReportesControlador {
             String codigoReporte = requestBody.get("codigoReporte");
             String respuesta = requestBody.get("respuesta");
             Reportes.SubestadoR subestado = Reportes.SubestadoR.valueOf(requestBody.get("subestado"));
-
             Reportes reporteActualizado = reportesNegocio.responderReporte(codigoReporte, respuesta, subestado);
-
             return ResponseEntity.ok(reporteActualizado);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

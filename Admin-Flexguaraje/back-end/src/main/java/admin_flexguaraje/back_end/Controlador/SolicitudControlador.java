@@ -34,7 +34,6 @@ public class SolicitudControlador {
     public ResponseEntity<List<Solicitudes>> buscarPorDni(@RequestBody Map<String, String> request) {
         String dni = request.get("dni");
         List<Solicitudes> solicitudes = solicitudNegocio.buscarPorDni(dni);
-
         return ResponseEntity.ok(solicitudes); // Devuelve 200 OK con una lista vacía en caso de no encontrar solicitudes
     }
 
@@ -52,12 +51,10 @@ public class SolicitudControlador {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("El DNI debe tener exactamente 8 dígitos numéricos.");
         }
-
         // Validar si el código tiene exactamente 15 caracteres
         if (codigoSolicitud == null || codigoSolicitud.length() != 15) {
             return ResponseEntity.badRequest().body("El código de solicitud debe tener exactamente 15 caracteres.");
         }
-
         if (!codigoSolicitud.matches("^SLT-\\d{11}$")) {
             return ResponseEntity.badRequest().body("El código de solicitud debe seguir el formato correspondiente. EJEMPLO: SLT-12345678901");
         }
@@ -77,7 +74,6 @@ public class SolicitudControlador {
                     .body("No se encontró ninguna solicitud con el código proporcionado.");
         }
     }
-
 
     @PostMapping("/crear_solicitud")
     public ResponseEntity<Object> crearSolicitud(@RequestBody Map<String, Object> body) {
@@ -296,7 +292,6 @@ public class SolicitudControlador {
             if (solicitudExistente.get().getEstado() != Solicitudes.Estado.Pendiente) {
                 return ResponseEntity.badRequest().body("Solo se pueden responder solicitudes con estado PENDIENTE.");
             }
-
             // Validar subestado
             if (!subestadoStr.equals("Acogido") && !subestadoStr.equals("No_acogido")) {
                 return ResponseEntity.badRequest().body("El subestado debe ser ACOGIDO o NO_ACOGIDO.");
@@ -324,5 +319,4 @@ public class SolicitudControlador {
             return ResponseEntity.status(500).body(Map.of("message", "Error al registrar la respuesta", "error", e.getMessage()));
         }
     }
-
 }

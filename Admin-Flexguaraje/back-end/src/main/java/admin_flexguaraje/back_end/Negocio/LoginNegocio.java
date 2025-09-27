@@ -3,7 +3,6 @@ package admin_flexguaraje.back_end.Negocio;
 import admin_flexguaraje.back_end.Modelo.Cuenta;
 import admin_flexguaraje.back_end.Repositorio.LoginRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,14 +1,11 @@
 package admin_flexguaraje.back_end.Negocio;
 
 import admin_flexguaraje.back_end.Modelo.Cuenta;
-import admin_flexguaraje.back_end.Modelo.Roles;
 import admin_flexguaraje.back_end.Modelo.Usuario;
 import admin_flexguaraje.back_end.Repositorio.CuentaRepositorio;
-import admin_flexguaraje.back_end.Repositorio.RolesRepositorio;
 import admin_flexguaraje.back_end.Repositorio.UsuarioRepositorio;
 import admin_flexguaraje.back_end.seguridad.GeneradorPassSeguro;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -110,7 +107,4 @@ public class CuentaNegocio {
         // Guardar la cuenta actualizada
         return cuentaRepositorio.save(cuenta);
     }
-
-
-
 }

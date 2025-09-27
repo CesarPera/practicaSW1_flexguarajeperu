@@ -10,5 +10,4 @@ import java.util.Optional;
 public interface EspacioRepositorio extends JpaRepository<Espacio, Long> {
     Optional<Espacio> findByCodigoEspacio(String codigoEspacio); // Método para buscar por código
     boolean existsByCodigoEspacio(String codigoEspacio);
-
 }

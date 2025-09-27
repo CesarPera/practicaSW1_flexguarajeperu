@@ -75,7 +75,6 @@ public class UsuarioNegocio {
             String nuevoNombreUsuario = usuario.getApellidoPaterno() + "_" + usuario.getDni() + "_PERU";
             usuario.setNombreUsuario(nuevoNombreUsuario.toUpperCase());
         }
-
         return usuarioRepositorio.save(usuario); // Guardar cambios en la base de datos
     }
 
@@ -98,5 +97,4 @@ public class UsuarioNegocio {
         usuarioRepositorio.save(usuario);
         return "Estado del usuario con DNI " + dni + " actualizado a " + usuario.getEstado();
     }
-
 }

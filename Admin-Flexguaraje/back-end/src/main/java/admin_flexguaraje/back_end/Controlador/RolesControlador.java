@@ -41,7 +41,6 @@ public class RolesControlador {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
         return ResponseEntity.ok("Rol creado exitosamente.");
     }
 
@@ -75,7 +74,6 @@ public class RolesControlador {
             return ResponseEntity.badRequest().body("El rol con el ID " + idRol + " no está activo, no se puede actualizar.");
         }
 
-
         // Validación de existencia del rol con el mismo nombre
         try {
             Roles rolActualizado = rolesNegocio.actualizarRol(idRol, nombreRol);
@@ -84,7 +82,6 @@ public class RolesControlador {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 
     @PutMapping("/actualizar_estado_rol")
     public ResponseEntity<String> actualizarEstadoRol(@RequestBody Map<String, Object> body) {
@@ -114,21 +111,16 @@ public class RolesControlador {
     public ResponseEntity<String> eliminarRol(@RequestBody Map<String, Object> body) {
         // Extraemos el idRol desde el cuerpo de la solicitud
         String idRolStr = String.valueOf(body.get("idRol"));
-
         // Validación para asegurarse de que idRol es numérico
         if (idRolStr == null || !idRolStr.matches("[0-9]+")) {
             return ResponseEntity.badRequest().body("El idRol debe ser un número válido.");
         }
-
         Long idRol = Long.valueOf(idRolStr);
-
         // Llamamos al negocio para eliminar el rol
         String result = rolesNegocio.eliminarRol(idRol);
-
         if (result.contains("no existe")) {
             return ResponseEntity.badRequest().body("El rol con el ID " + idRol + " no existe.");
         }
-
         return ResponseEntity.ok(result);
     }
 }

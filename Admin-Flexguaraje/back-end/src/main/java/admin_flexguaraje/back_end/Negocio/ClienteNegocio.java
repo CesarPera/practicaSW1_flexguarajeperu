@@ -20,7 +20,6 @@ public class ClienteNegocio {
         return clienteRepositorio.existsByEmail(email);
     }
 
-
     public List<Cliente> ListarClientes() {
         return clienteRepositorio.findAll();
     }
@@ -36,7 +35,6 @@ public class ClienteNegocio {
     public List<Cliente> buscarPorNombreCompleto(String nombre, String apellidoPaterno, String apellidoMaterno) {
         return clienteRepositorio.findByNombreAndApellidoPaternoAndApellidoMaterno(nombre, apellidoPaterno, apellidoMaterno);
     }
-
 
     public Cliente crearCliente(Cliente cliente) {
         // Guardar el cliente en la base de datos

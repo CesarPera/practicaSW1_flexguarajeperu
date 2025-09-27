@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Service
 public class RolesNegocio {
+
     @Autowired
     private RolesRepositorio rolesRepositorio;
 

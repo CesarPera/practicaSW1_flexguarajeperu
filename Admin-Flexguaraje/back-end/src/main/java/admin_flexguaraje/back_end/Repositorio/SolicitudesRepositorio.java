@@ -12,7 +12,4 @@ import java.util.Optional;
 public interface SolicitudesRepositorio extends JpaRepository<Solicitudes, Long> {
     Optional<Solicitudes> findByCodigoSolicitud(String CodigoSolicitud);
     List<Solicitudes> findByCliente(Cliente cliente);
-
-
-
 }
