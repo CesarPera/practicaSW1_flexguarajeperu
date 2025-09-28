@@ -34,30 +34,16 @@ function App() {
 
         <div className="content-container">
           <Routes>
-            {/* Ruta General pero con Login*/}
-            <Route path="/bienvenido_a_flexguaraje_peru" element={<ContenidoInicio />} />
-
-            {/* Rutas accesibles sin autenticación */}
-            <Route path="/" element={<Login />} />
-            <Route path="/cambiar_contraseña" element={<CambiarPassManual />} />
-
-            {/* Página para propietario */}
-            <Route element={<ProtegerRutasUrl allowedRoles={["PROPIETARIO"]} />}>
-              <Route path="/cuenta" element={<Cuenta />} />
-              <Route path="/permisos" element={<Permisos />} />
-              <Route path="/roles" element={<Roles />} />
-              <Route path="/usuario" element={<Usuario />} />
-            </Route>
-
-            {/* Página para administrador */}
-            <Route element={<ProtegerRutasUrl allowedRoles={["PROPIETARIO", "ADMINISTRADOR"]} />}>
-              <Route path="/clientes" element={<Clientes />} />
-              <Route path="/solicitudesclientes" element={<SolicitudesClientes />} />
-              <Route path="/espacios" element={<Espacios />} />
-              <Route path="/Boleta" element={<Boleta />} />
-              <Route path="/reportes" element={<Reportes />} />
-            </Route>
-
+            <Route path="/" element={<ContenidoInicio />} />
+            <Route path="/cuenta" element={<Cuenta />} />
+            <Route path="/permisos" element={<Permisos />} />
+            <Route path="/roles" element={<Roles />} />
+            <Route path="/usuario" element={<Usuario />} />
+            <Route path="/clientes" element={<Clientes />} />
+            <Route path="/solicitudesclientes" element={<SolicitudesClientes />} />
+            <Route path="/espacios" element={<Espacios />} />
+            <Route path="/Boleta" element={<Boleta />} />
+            <Route path="/reportes" element={<Reportes />} />
           </Routes>
         </div>
       </div>
