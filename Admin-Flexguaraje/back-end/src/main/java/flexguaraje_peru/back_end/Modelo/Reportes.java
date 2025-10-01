@@ -9,6 +9,7 @@ import java.time.LocalDate;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "codigo_reporte")})
 public class Reportes {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_reportes")
@@ -20,18 +21,16 @@ public class Reportes {
     private Usuario usuario;
 
     @Column(name = "codigo_reporte", nullable = false, length = 15)
-    private String codigoReporte; // AUTOMATICO
-    // EJEMPLO DE CODIGO: RPT-12345678901
+    private String codigoReporte;
 
     @Column(name = "fecha_reporte", nullable = false)
-    private LocalDate FechaReporte; // AUTOMATICO
+    private LocalDate FechaReporte;
 
     @Column(name = "descripcion_reporte", nullable = false, length = 255)
     private String DescripcionReporte;
 
     @Column(name = "encargado_resolver", nullable = false, length = 100)
     private String EncargadoResolver;
-    // DEBE PODER INGRESAR USUARIOS CON ROL DE MANTENIMIENTO Y EL USUARIO ESTADO ACTIVO.
 
     @Enumerated(EnumType.STRING)
     @Column(name = "prioridad", nullable = false, length = 15)
@@ -46,7 +45,7 @@ public class Reportes {
     private SubestadoR Subestado;
 
     @Column(name = "fecha_respuesta_reporte")
-    private LocalDate FechaRespuestaReporte; // AUTOMATICO
+    private LocalDate FechaRespuestaReporte;
 
     @Column(name = "respuestas_reporte", length = 255)
     private String RespuestaReporte;

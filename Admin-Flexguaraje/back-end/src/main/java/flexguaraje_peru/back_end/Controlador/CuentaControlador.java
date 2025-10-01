@@ -4,7 +4,6 @@ import flexguaraje_peru.back_end.Modelo.Cuenta;
 import flexguaraje_peru.back_end.Negocio.CuentaNegocio;
 import flexguaraje_peru.back_end.seguridad.GeneradorPassSeguro;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/cuentas")
 public class CuentaControlador {
+
     @Autowired
     private CuentaNegocio cuentaNegocio;
 
@@ -37,17 +37,17 @@ public class CuentaControlador {
         try {
             // Buscar cuenta usando el DNI
             Cuenta cuenta = cuentaNegocio.buscarCuentaPorDni(dni);
-
             // Si la cuenta existe, devolvemos la cuenta completa
             return ResponseEntity.ok(cuenta); // Devolvemos la cuenta completa
+
         } catch (Exception e) {
             // Si no se encuentra la cuenta, respondemos con el mensaje de error
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cuenta no encontrada: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Cuenta no encontrada: " + e.getMessage());
         }
     }
 
     @PostMapping("/crear_cuenta")
-    public ResponseEntity<String> crearCuenta(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> crearCuenta(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
 
         // Validar formato del DNI (debe ser un número de 8 dígitos)
@@ -58,14 +58,15 @@ public class CuentaControlador {
         try {
             // Crear cuenta, pasando solo el DNI (el sistema genera email y contraseña automáticamente)
             Cuenta cuenta = cuentaNegocio.crearCuenta(dni);
-            return ResponseEntity.ok("Cuenta creada exitosamente: " + cuenta.getEmail());
+            return ResponseEntity.ok(cuenta);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al crear la cuenta: " + e.getMessage());
         }
     }
 
     @PutMapping("/actualizar_estado_cuenta")
-    public ResponseEntity<String> actualizarEstadoCuenta(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> actualizarEstadoCuenta(@RequestBody Map<String, Object> body) {
         String dni = (String) body.get("dni");
 
         // Validar formato del DNI
@@ -75,14 +76,15 @@ public class CuentaControlador {
 
         try {
             Cuenta cuentaActualizada = cuentaNegocio.actualizarEstadoCuentaPorDni(dni);
-            return ResponseEntity.ok("Estado de la cuenta actualizado exitosamente. Nuevo estado: " + cuentaActualizada.getEstado());
+            return ResponseEntity.ok(cuentaActualizada);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al actualizar el estado de la cuenta: " + e.getMessage());
         }
     }
 
     @PutMapping("/actualizar_pass_automatico")
-    public ResponseEntity<String> actualizarContrasena(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> actualizarContrasena(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
 
         // Validar formato del DNI
@@ -98,9 +100,8 @@ public class CuentaControlador {
             Cuenta cuentaActualizada = cuentaNegocio.actualizarContrasenaPorDni(dni, nuevaContrasena);
 
             // Responder con la nueva contraseña generada
-            return ResponseEntity.ok("Contraseña actualizada exitosamente. La nueva contraseña es: " + nuevaContrasena);
+            return ResponseEntity.ok(cuentaActualizada);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.badRequest().body("Error al actualizar la contraseña: " + e.getMessage());
         }
     }

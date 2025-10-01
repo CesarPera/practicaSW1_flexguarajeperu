@@ -4,13 +4,13 @@ import flexguaraje_peru.back_end.Modelo.Boleta;
 import flexguaraje_peru.back_end.Modelo.Espacio;
 import flexguaraje_peru.back_end.Negocio.BoletaNegocio;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+// se cambia linea 109 - 125
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/boletas")
@@ -20,9 +20,8 @@ public class BoletaControlador {
     private BoletaNegocio boletaNegocio;
 
     @GetMapping("/listar_boleta_general")
-    public ResponseEntity<List<Boleta>> listarBoletas() {
-        List<Boleta> listarboleta = boletaNegocio.listarBoleta();
-        return ResponseEntity.ok(listarboleta);
+    public List<Boleta> listarBoletas() {
+        return boletaNegocio.listarBoleta();
     }
 
     @PostMapping("/buscar_boleta")
@@ -36,9 +35,10 @@ public class BoletaControlador {
 
             Boleta boleta = boletaNegocio.buscarPorCodigoBoleta(codigoBoleta);
             return ResponseEntity.ok(boleta);
+
         } catch (IllegalArgumentException e) {
             // Devuelve un error 404 con un mensaje claro
-            return ResponseEntity.status(404).body("El código de boleta no existe.");
+            return ResponseEntity.badRequest().body("El código de boleta no existe.");
         }
     }
 
@@ -51,9 +51,11 @@ public class BoletaControlador {
         if (dni == null || dni.isEmpty()) {
             return ResponseEntity.badRequest().body("El DNI es obligatorio.");
         }
+
         if (dni.length() != 8) {
             return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
         }
+
         if (!dni.matches("\\d+")) { // Validar que el DNI solo contenga números
             return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
         }
@@ -90,12 +92,13 @@ public class BoletaControlador {
             if (dni.length() != 8) {
                 return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
             }
+
             if (!dni.matches("\\d+")) { // Validar que el DNI solo contenga números
                 return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
             }
 
             if (!boletaNegocio.existeDni(dni)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("CLIENTE NO EXISTE");
+                return ResponseEntity.badRequest().body("Cliente no encontrado.");
             }
 
             if (codigoEspacio == null || codigoEspacio.isEmpty()) {
@@ -103,25 +106,24 @@ public class BoletaControlador {
             }
 
             Boleta boleta = boletaNegocio.agregarBoleta(dni, codigoEspacio);
-            return ResponseEntity.status(HttpStatus.CREATED).body(boleta);
+            return ResponseEntity.ok(boleta);
 
         } catch (RuntimeException e) {
             // Si la excepción es "BOLETA EXISTENTE", manejamos el error de esa forma
             if ("El alquiler ya tiene una boleta asociada".equals(e.getMessage())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El alquiler ya tiene una boleta asociada");
+                return ResponseEntity.badRequest().body("El alquiler ya tiene una boleta asociada");
             }
+
             // Si la excepción es "ALQUILER NO ENCONTRADO", manejamos el error de esa forma
             if ("El cliente no tiene alquileres activos con ese código de espacio".equals(e.getMessage())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El cliente no tiene alquileres activos para ese código de espacio");
+                return ResponseEntity.badRequest().body("El cliente no tiene alquileres activos para ese código de espacio");
             }
+
             // Manejo de excepciones generales
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor.");
+            return ResponseEntity.badRequest().body("Error interno del servidor." + e.getMessage());
         }
     }
 }
-
-
-
-

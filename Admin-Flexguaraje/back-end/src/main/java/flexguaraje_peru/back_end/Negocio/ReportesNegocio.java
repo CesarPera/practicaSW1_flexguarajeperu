@@ -23,16 +23,12 @@ public class ReportesNegocio {
 
     private final Random random = new Random();
 
-    public ReportesNegocio(ReportesRepositorio reportesRepositorio, UsuarioRepositorio usuarioRepositorio) {
-        this.reportesRepositorio = reportesRepositorio;
-        this.usuarioRepositorio = usuarioRepositorio;
-    }
-
     public List<Reportes> listarTodos() {
         return reportesRepositorio.findAll();
     }
 
     private Usuario validarUsuarioParaReporte(String dniEncargado) {
+
         if (!dniEncargado.matches("\\d{8}")) {
             throw new IllegalArgumentException("Solo se aceptan 8 caracteres numéricos.");
         }

@@ -30,9 +30,9 @@ public class UsuarioControlador {
     }
 
     @GetMapping("/roles_activos")
-    public ResponseEntity<List<Roles>> obtenerRolesActivos() {
-        List<Roles> rolesActivos = usuarioNegocio.obtenerRolesActivos();
-        return ResponseEntity.ok(rolesActivos);
+    public List<Roles> obtenerRolesActivos() {
+        return usuarioNegocio.obtenerRolesActivos();
+
     }
 
     @PostMapping("/buscar_usuario_dni")
@@ -56,7 +56,7 @@ public class UsuarioControlador {
     }
 
     @PostMapping("/crear_usuario")
-    public ResponseEntity<String> crearUsuario(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> crearUsuario(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
         String nombre = body.get("nombre");
         String apellidoPaterno = body.get("apellidoPaterno");
@@ -115,15 +115,16 @@ public class UsuarioControlador {
         nuevoUsuario.setNombreUsuario(nombreUsuario);
 
         try {
-            usuarioNegocio.crearUsuario(nuevoUsuario);
-            return ResponseEntity.ok("Usuario creado con éxito.");
+            Usuario CrearUsuario = usuarioNegocio.crearUsuario(nuevoUsuario);
+            return ResponseEntity.ok(CrearUsuario);
+
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
     }
 
     @PutMapping("/actualizar_usuario")
-    public ResponseEntity<String> actualizarUsuario(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> actualizarUsuario(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
 
         if (dni == null || !dni.matches("\\d{8}")) {
@@ -131,7 +132,7 @@ public class UsuarioControlador {
         }
         Optional<Usuario> usuarioExistente = usuarioNegocio.buscarUsuarioPorDni(dni);
         if (usuarioExistente.isEmpty()) {
-            return ResponseEntity.status(404).body("El usuario con DNI " + dni + " no se encuentra.");
+            return ResponseEntity.badRequest().body("El usuario con DNI " + dni + " no se encuentra.");
         }
 
         Usuario usuario = usuarioExistente.get();
@@ -194,15 +195,15 @@ public class UsuarioControlador {
         }
 
         try {
-            usuarioNegocio.actualizarUsuario(usuario);
-            return ResponseEntity.ok("Usuario actualizado con éxito.");
+            Usuario ActualizarUsuario = usuarioNegocio.actualizarUsuario(usuario);
+            return ResponseEntity.ok(ActualizarUsuario);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PutMapping("/actualizar_estado_usuario")
-    public ResponseEntity<String> actualizarEstadoUsuario(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> actualizarEstadoUsuario(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
 
         // Validación de DNI
@@ -214,7 +215,7 @@ public class UsuarioControlador {
             String resultado = usuarioNegocio.actualizarEstadoUsuario(dni);
             return ResponseEntity.ok(resultado);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
     }
 }

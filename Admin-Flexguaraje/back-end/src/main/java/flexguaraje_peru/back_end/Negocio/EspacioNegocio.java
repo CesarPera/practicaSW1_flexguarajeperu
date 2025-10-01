@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 public class EspacioNegocio {
+
     @Autowired
     private EspacioRepositorio espacioRepositorio;
 

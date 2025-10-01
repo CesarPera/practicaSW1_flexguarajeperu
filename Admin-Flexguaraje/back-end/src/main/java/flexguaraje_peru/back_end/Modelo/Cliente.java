@@ -9,6 +9,7 @@ import java.util.List;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "dni")})
 public class Cliente {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cliente")
@@ -122,24 +123,5 @@ public class Cliente {
         this.alquileres = alquileres;
     }
 
-    @PrePersist
-    @PreUpdate
-    private void validarDatos() {
-        if (!dni.matches("\\d{8}")) {
-            throw new IllegalArgumentException("El DNI debe contener exactamente 8 dígitos.");
-        }
-        if (!telefono.matches("\\d{9}")) {
-            throw new IllegalArgumentException("El teléfono debe contener exactamente 9 dígitos.");
-        }
-        if (!nombre.matches("[A-Za-z ]+")) {
-            throw new IllegalArgumentException("El nombre solo debe contener letras.");
-        }
-        if (!apellidoPaterno.matches("[A-Za-z]+")) {
-            throw new IllegalArgumentException("El apellido paterno solo debe contener letras.");
-        }
-        if (!apellidoMaterno.matches("[A-Za-z]+")) {
-            throw new IllegalArgumentException("El apellido materno solo debe contener letras.");
-        }
-    }
 }
 

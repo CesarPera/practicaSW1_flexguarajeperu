@@ -3,7 +3,6 @@ package flexguaraje_peru.back_end.Controlador;
 import flexguaraje_peru.back_end.Modelo.Cliente;
 import flexguaraje_peru.back_end.Negocio.ClienteNegocio;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +13,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/cliente")
 public class ClienteControlador {
+
     @Autowired
     private ClienteNegocio clienteNegocio;
 
@@ -30,9 +30,11 @@ public class ClienteControlador {
         if (dni == null || dni.isEmpty()) {
             return ResponseEntity.badRequest().body("El DNI no puede estar vacío.");
         }
+
         if (dni.length() != 8) {
             return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
         }
+
         if (!dni.matches("\\d+")) { // Validar que el DNI solo contenga números
             return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
         }
@@ -40,6 +42,7 @@ public class ClienteControlador {
         try {
             Cliente cliente = clienteNegocio.buscarPorDni(dni);
             return ResponseEntity.ok(cliente);
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Cliente con DNI " + dni + " no existe.");
         }
@@ -47,6 +50,7 @@ public class ClienteControlador {
 
     @PostMapping("/buscar_cliente_nombreCompleto")
     public ResponseEntity<?> buscarClientePorNombreCompleto(@RequestBody Map<String, Object> cuerpo) {
+
         String nombre = ((String) cuerpo.get("nombre")).toLowerCase();
         String apellidoPaterno = ((String) cuerpo.get("apellido_paterno")).toLowerCase();
         String apellidoMaterno = ((String) cuerpo.get("apellido_materno")).toLowerCase();
@@ -55,9 +59,11 @@ public class ClienteControlador {
         if (!nombre.matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
             return ResponseEntity.badRequest().body("El nombre solo debe contener letras.");
         }
+
         if (!apellidoPaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido paterno solo debe contener letras.");
         }
+
         if (!apellidoMaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido materno solo debe contener letras.");
         }
@@ -69,11 +75,11 @@ public class ClienteControlador {
                 return ResponseEntity.ok(clientes);
             } else {
                 // Si no se encontró ningún cliente, devolver el mensaje adecuado
-                return ResponseEntity.status(404).body("No se encontró un cliente con el nombre completo: "
+                return ResponseEntity.badRequest().body("No se encontró un cliente con el nombre completo: "
                         + nombre + " " + apellidoPaterno + " " + apellidoMaterno);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error al buscar el cliente.");
+            return ResponseEntity.badRequest().body("Error al buscar el cliente: " + e.getMessage());
         }
     }
 
@@ -88,6 +94,7 @@ public class ClienteControlador {
             if (dni.length() != 8) {
                 return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
             }
+
             if (!dni.matches("\\d+")) { // Validar que el DNI solo contenga números
                 return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
             }
@@ -100,9 +107,11 @@ public class ClienteControlador {
             if (!nombre.matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
                 return ResponseEntity.badRequest().body("El nombre solo debe contener letras.");
             }
+
             if (!apellidoPaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
                 return ResponseEntity.badRequest().body("El apellido paterno solo debe contener letras.");
             }
+
             if (!apellidoMaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
                 return ResponseEntity.badRequest().body("El apellido materno solo debe contener letras.");
             }
@@ -113,6 +122,7 @@ public class ClienteControlador {
             if (telefono.length() != 9) {
                 return ResponseEntity.badRequest().body("El teléfono debe tener 9 caracteres.");
             }
+
             if (!telefono.matches("\\d+")) { // Validar que el teléfono solo contenga números
                 return ResponseEntity.badRequest().body("El teléfono solo debe contener números.");
             }
@@ -128,7 +138,7 @@ public class ClienteControlador {
 
             // Verificar si el cliente ya existe en base al DNI
             if (clienteNegocio.existeClientePorDni(dni)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ya existe un cliente con este DNI " + dni + ".");
+                return ResponseEntity.badRequest().body("Ya existe un cliente con este DNI " + dni + ".");
             }
 
             // Creación del objeto Cliente
@@ -144,7 +154,8 @@ public class ClienteControlador {
 
             // Llamada al servicio para crear el cliente
             Cliente clienteCreado = clienteNegocio.crearCliente(cliente);
-            return ResponseEntity.status(201).body(clienteCreado); // 201 Created
+            return ResponseEntity.ok(clienteCreado); // 201 Created
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al crear el cliente: " + e.getMessage());
         }
@@ -159,9 +170,11 @@ public class ClienteControlador {
             if (dni == null || dni.isEmpty()) {
                 return ResponseEntity.badRequest().body("El DNI no puede estar vacío.");
             }
+
             if (dni.length() != 8) {
                 return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
             }
+
             if (!dni.matches("\\d+")) { // Validar que el DNI solo contenga números
                 return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
             }
@@ -180,12 +193,15 @@ public class ClienteControlador {
             if (!nuevosDatos.getNombre().matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
                 return ResponseEntity.badRequest().body("El nombre solo debe contener letras.");
             }
+
             if (!nuevosDatos.getApellidoPaterno().matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
                 return ResponseEntity.badRequest().body("El apellido paterno solo debe contener letras.");
             }
+
             if (!nuevosDatos.getApellidoMaterno().matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
                 return ResponseEntity.badRequest().body("El apellido materno solo debe contener letras.");
             }
+
             if (nuevosDatos.getTelefono().length() != 9 || !nuevosDatos.getTelefono().matches("\\d+")) {
                 return ResponseEntity.badRequest().body("El teléfono debe tener 9 caracteres numéricos.");
             }
@@ -193,11 +209,9 @@ public class ClienteControlador {
             // Actualizar cliente
             Cliente clienteActualizado = clienteNegocio.actualizarCliente(dni, nuevosDatos);
             return ResponseEntity.ok(clienteActualizado);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
+
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error al actualizar el cliente: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error al actualizar el cliente: " + e.getMessage());
         }
     }
-
 }

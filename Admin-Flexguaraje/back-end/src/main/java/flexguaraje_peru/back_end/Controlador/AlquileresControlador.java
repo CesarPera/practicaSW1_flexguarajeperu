@@ -4,7 +4,6 @@ import flexguaraje_peru.back_end.Modelo.Alquileres;
 import flexguaraje_peru.back_end.Modelo.Espacio;
 import flexguaraje_peru.back_end.Negocio.AlquileresNegocio;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,18 +17,12 @@ import java.util.Map;
 public class AlquileresControlador {
 
     @Autowired
-    private final AlquileresNegocio alquileresNegocio;
-
-    @Autowired
-    public AlquileresControlador(AlquileresNegocio alquileresNegocio) {
-        this.alquileresNegocio = alquileresNegocio;
-    }
+    private AlquileresNegocio alquileresNegocio;
 
     // Endpoint para listar todos los alquileres generales
     @GetMapping("/listar_alquileres_general")
-    public ResponseEntity<List<Alquileres>> listarAlquileres() {
-        List<Alquileres> listaAlquileres = alquileresNegocio.listarAlquileres();
-        return ResponseEntity.ok(listaAlquileres);
+    public List<Alquileres> listarAlquileres() {
+        return alquileresNegocio.listarAlquileres();
     }
 
     // LISTAR ALQUILERES CON SOLO ESTADO "NO IGNORAR"
@@ -39,13 +32,13 @@ public class AlquileresControlador {
     }
 
     @PostMapping("/crear_alquiler")
-    public ResponseEntity<Object> agregarClienteAlEspacio(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> agregarClienteAlEspacio(@RequestBody Map<String, Object> body) {
         try {
             // Verificar si los valores son nulos o vacíos
             if (body.get("dni") == null || body.get("dni").toString().isEmpty() ||
                     body.get("codigoEspacio") == null || body.get("codigoEspacio").toString().isEmpty() ||
                     body.get("fechaFin") == null || body.get("fechaFin").toString().isEmpty()) {
-                return new ResponseEntity<>(Map.of("message", "Faltan parámetros en la solicitud. Complete todos los campos."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Faltan parámetros en la solicitud. Complete todos los campos.");
             }
 
             String dni = body.get("dni").toString();
@@ -56,11 +49,13 @@ public class AlquileresControlador {
             if (dni.length() != 8) {
                 return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
             }
+
             if (!dni.matches("\\d+")) { // Validar que el DNI solo contenga números
                 return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
             }
+
             if (!alquileresNegocio.existeDni(dni)) {
-                return new ResponseEntity<>(Map.of("message", "CLIENTE CON DNI " + dni + " NO EXISTE."), HttpStatus.NOT_FOUND);
+                return ResponseEntity.badRequest().body("CLIENTE CON DNI " + dni + " NO EXISTE.");
             }
 
             // Validar formato de fecha
@@ -68,41 +63,41 @@ public class AlquileresControlador {
             try {
                 fechaFin = LocalDate.parse(fechaFinStr);
             } catch (Exception e) {
-                return new ResponseEntity<>(Map.of("message", "Formato de fecha inválido. Use el formato YYYY-MM-DD."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Formato de fecha inválido. Use el formato YYYY-MM-DD.");
             }
 
             // Validar que la fecha de fin sea posterior o igual a la fecha actual
             if (fechaFin.isBefore(LocalDate.now())) {
-                return new ResponseEntity<>(Map.of("message", "La fecha de fin debe ser igual o posterior a la fecha actual."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("La fecha de fin debe ser igual o posterior a la fecha actual.");
             }
 
             // Validar existencia del código de espacio
             Long idEspacio = alquileresNegocio.obtenerIdPorCodigoEspacio(codigoEspacio);
             if (idEspacio == null) {
-                return new ResponseEntity<>(Map.of("message", "El código del espacio ingresado no existe."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("El código del espacio ingresado no existe.");
             }
 
             // Verificar si el espacio ya tiene un alquiler activo
             if (alquileresNegocio.espacioTieneAlquiler(codigoEspacio)) {
-                return new ResponseEntity<>(Map.of("message", "El espacio ya tiene un alquiler activo."), HttpStatus.CONFLICT);
+                return ResponseEntity.badRequest().body("El espacio ya tiene un alquiler activo.");
             }
 
             // Crear el alquiler
             Alquileres nuevoAlquiler = alquileresNegocio.agregarClienteAlEspacio(dni, idEspacio, fechaFin);
-            return new ResponseEntity<>(nuevoAlquiler, HttpStatus.CREATED);
+            return ResponseEntity.ok(nuevoAlquiler);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
     }
 
     @PutMapping("/actualizar_estado")
-    public ResponseEntity<Object> actualizarEstadoEspacio(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> actualizarEstadoEspacio(@RequestBody Map<String, Object> body) {
         try {
             // Verificar campos requeridos
             if (body.get("codigoEspacio") == null || body.get("codigoEspacio").toString().isEmpty() ||
                     body.get("nuevoEstado") == null || body.get("nuevoEstado").toString().isEmpty()) {
-                return new ResponseEntity<>(Map.of("message", "Faltan parámetros en la solicitud. Complete todos los campos."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Faltan parámetros en la solicitud. Complete todos los campos.");
             }
 
             String codigoEspacio = body.get("codigoEspacio").toString();
@@ -110,31 +105,31 @@ public class AlquileresControlador {
 
             // Validar existencia del espacio
             if (!alquileresNegocio.existeCodigoEspacio(codigoEspacio)) {
-                return new ResponseEntity<>(Map.of("message", "El código del espacio ingresado no existe."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("El código del espacio ingresado no existe.");
             }
 
             // Validar estado válido
             try {
                 Espacio.EstadoEspacio estado = Espacio.EstadoEspacio.valueOf(nuevoEstado);
             } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(Map.of("message", "El estado ingresado no es válido."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("El estado ingresado no es válido.");
             }
 
             Espacio espacioActualizado = alquileresNegocio.actualizarEstadoPorCodigo(codigoEspacio, Espacio.EstadoEspacio.valueOf(nuevoEstado));
-            return new ResponseEntity<>(espacioActualizado, HttpStatus.OK);
+            return ResponseEntity.ok(espacioActualizado);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("message", "Ocurrió un error: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.badRequest().body("Ocurrió un error: " + e.getMessage());
         }
     }
 
     @PutMapping("/actualizar_alquiler")
-    public ResponseEntity<Object> actualizarClienteEnAlquiler(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> actualizarClienteEnAlquiler(@RequestBody Map<String, Object> body) {
         try {
             // Verificar campos requeridos
             if (body.get("codigoEspacio") == null || body.get("codigoEspacio").toString().isEmpty() ||
                     body.get("nuevoDniCliente") == null || body.get("nuevoDniCliente").toString().isEmpty()) {
-                return new ResponseEntity<>(Map.of("message", "Faltan parámetros en la solicitud. Complete todos los campos."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Faltan parámetros en la solicitud. Complete todos los campos.");
             }
 
             String codigoEspacio = body.get("codigoEspacio").toString();
@@ -144,49 +139,46 @@ public class AlquileresControlador {
             if (nuevoDni.length() != 8) {
                 return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
             }
+
             if (!nuevoDni.matches("\\d+")) { // Validar que el DNI solo contenga números
                 return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
             }
+
             if (!alquileresNegocio.existeDni(nuevoDni)) {
-                return new ResponseEntity<>(Map.of("message", "CLIENTE CON DNI " + nuevoDni + " NO EXISTE."), HttpStatus.NOT_FOUND);
-
+                return ResponseEntity.badRequest().body("CLIENTE CON DNI " + nuevoDni + " NO EXISTE.");
             }
-
 
             // Validar existencia del espacio
             if (!alquileresNegocio.existeCodigoEspacio(codigoEspacio)) {
-                return new ResponseEntity<>(Map.of("message", "El código del espacio ingresado no existe."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("El código del espacio ingresado no existe.");
             }
 
             Alquileres alquilerActualizado = alquileresNegocio.actualizarClienteEnAlquiler(codigoEspacio, nuevoDni);
-            return new ResponseEntity<>(alquilerActualizado, HttpStatus.OK);
+            return ResponseEntity.ok(alquilerActualizado);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
     }
 
     // LITERAL SE ESTARIA ELIMINANDO ALQUILER PERO SOLO ACTUALIZA
     @PutMapping("/eliminar_alquiler")
-    public ResponseEntity<Object> actualizarEstadoAlquiler(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> actualizarEstadoAlquiler(@RequestBody Map<String, String> body) {
         try {
             if (body.get("codigoEspacio") == null || body.get("codigoEspacio").isEmpty()) {
-                return new ResponseEntity<>(Map.of("message", "Faltan parámetros en la solicitud. Complete todos los campos."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Faltan parámetros en la solicitud. Complete todos los campos.");
             }
 
             String codigoEspacio = body.get("codigoEspacio");
             if (!alquileresNegocio.existeCodigoEspacio(codigoEspacio)) {
-                return new ResponseEntity<>(Map.of("message", "El código del espacio ingresado no existe."), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("El código del espacio ingresado no existe.");
             }
 
             alquileresNegocio.actualizarEstadoAlquilerparaeliminar(codigoEspacio);
-            return new ResponseEntity<>(Map.of("message", "Estado del alquiler actualizado a IGNORAR correctamente"), HttpStatus.OK);
+            return ResponseEntity.ok(codigoEspacio);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("message", "Ocurrió un error: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.badRequest().body("Ocurrió un error: " + e.getMessage());
         }
     }
-
-
-
 }

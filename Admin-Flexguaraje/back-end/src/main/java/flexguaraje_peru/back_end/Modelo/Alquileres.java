@@ -93,17 +93,6 @@ public class Alquileres {
         this.estado = estado;
     }
 
-    @PrePersist
-    @PreUpdate
-    private void validarFechas() {
-        if (fechaInicioAlquiler.isAfter(fechaFinAlquiler)) {
-            throw new IllegalArgumentException(
-                    "La fecha final debe ser mayor que la fecha de inicio. " +
-                            "Inicio: " + fechaInicioAlquiler + ", Fin: " + fechaFinAlquiler
-            );
-        }
-    }
-
     public enum estadoAlquiler {
         Ignorar,
         No_Ignorar

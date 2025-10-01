@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @Service
 public class AlquileresNegocio {
+
     @Autowired
     private AlquileresRepositorio AlquileresRepositorio;
 
@@ -27,12 +28,10 @@ public class AlquileresNegocio {
     private ClienteRepositorio ClienteRepositorio;
 
     public boolean existeDni(String dni) {
-        // Consulta en el repositorio ClienteRepositorio para verificar si el DNI existe
         return ClienteRepositorio.existsByDni(dni); // Supone que tienes un método existsByDni en ClienteRepositorio
     }
 
     public boolean existeCodigoEspacio(String codigoEspacio) {
-        // Consulta en el repositorio EspacioRepositorio para verificar si el código de espacio existe
         return espacioRepositorio.existsByCodigoEspacio(codigoEspacio); // Supone que tienes un método existsByCodigoEspacio en EspacioRepositorio
     }
     // LISTAR ALQUILERES GENERALES

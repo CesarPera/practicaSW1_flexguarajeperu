@@ -8,15 +8,12 @@ import java.util.List;
 
 @Service
 public class ClienteNegocio {
+
     @Autowired
     private ClienteRepositorio clienteRepositorio;
 
     public boolean existeClientePorDni(String dni) {
         return clienteRepositorio.existsByDni(dni);
-    }
-
-    public boolean existeClientePorEmail(String email) {
-        return clienteRepositorio.existsByEmail(email);
     }
 
     public List<Cliente> ListarClientes() {
@@ -36,7 +33,6 @@ public class ClienteNegocio {
     }
 
     public Cliente crearCliente(Cliente cliente) {
-        // Guardar el cliente en la base de datos
         return clienteRepositorio.save(cliente);
     }
 

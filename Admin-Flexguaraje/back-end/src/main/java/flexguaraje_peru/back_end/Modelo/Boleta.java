@@ -11,6 +11,7 @@ import java.time.LocalDate;
                 @UniqueConstraint(columnNames = {"codigo_boleta"}), // Coincide con UQ_codigo_boleta
         })
 public class Boleta {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_boleta")
@@ -19,7 +20,7 @@ public class Boleta {
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_alquiler", nullable = false,
             foreignKey = @ForeignKey(name = "FK_boleta_Alquiler"))
-    private Alquileres alquileres; // Cambiar de List<Alquileres> a Alquileres
+    private Alquileres alquileres;
 
     @Column(name = "codigo_boleta", nullable = false, length = 15)
     private String codigoBoleta;

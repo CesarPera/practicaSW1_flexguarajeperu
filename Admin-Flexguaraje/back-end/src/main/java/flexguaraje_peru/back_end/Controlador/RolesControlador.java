@@ -14,17 +14,17 @@ import java.util.regex.Pattern;
 @RestController
 @RequestMapping("/roles")
 public class RolesControlador {
+
     @Autowired
     private RolesNegocio rolesNegocio;
 
     @GetMapping("/listar_roles")
-    public ResponseEntity<List<Roles>> listarRoles() {
-        List<Roles> roles = rolesNegocio.listarRoles();
-        return ResponseEntity.ok(roles);
+    public List<Roles> listarRoles() {
+        return rolesNegocio.listarRoles();
     }
 
     @PostMapping("/crear_rol")
-    public ResponseEntity<String> crearRol(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> crearRol(@RequestBody Map<String, Object> body) {
         String nombreRol = (String) body.get("nombreRol");
 
         // Convertir a mayúsculas
@@ -37,15 +37,16 @@ public class RolesControlador {
 
         // Validación de existencia del rol
         try {
-            rolesNegocio.crearRol(nombreRol);
+            Roles CrearRoles = rolesNegocio.crearRol(nombreRol);
+            return ResponseEntity.ok(CrearRoles);
+
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
-        return ResponseEntity.ok("Rol creado exitosamente.");
     }
 
     @PutMapping("/actualizar_nombre_rol")
-    public ResponseEntity<String> actualizarRol(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> actualizarRol(@RequestBody Map<String, Object> body) {
         String idRolString = (String) body.get("idRol");
         String nombreRol = (String) body.get("nombreRol");
 
@@ -77,14 +78,15 @@ public class RolesControlador {
         // Validación de existencia del rol con el mismo nombre
         try {
             Roles rolActualizado = rolesNegocio.actualizarRol(idRol, nombreRol);
-            return ResponseEntity.ok("Rol actualizado exitosamente: " + rolActualizado.getNombreRol());
+            return ResponseEntity.ok(rolActualizado);
+
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
     }
 
     @PutMapping("/actualizar_estado_rol")
-    public ResponseEntity<String> actualizarEstadoRol(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> actualizarEstadoRol(@RequestBody Map<String, Object> body) {
         String idRolString = (String) body.get("idRol");
 
         // Validación para idRol (solo numérico)
@@ -100,15 +102,15 @@ public class RolesControlador {
 
         // Intentar actualizar el estado del rol
         try {
-            Roles rolActualizado = rolesNegocio.actualizarEstadoRol(idRol);
-            return ResponseEntity.ok("Estado del rol actualizado exitosamente: " + rolActualizado.getEstado());
+            Roles rolActualizadoEstado = rolesNegocio.actualizarEstadoRol(idRol);
+            return ResponseEntity.ok(rolActualizadoEstado);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
     }
 
     @DeleteMapping("/eliminar_rol")
-    public ResponseEntity<String> eliminarRol(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> eliminarRol(@RequestBody Map<String, Object> body) {
         // Extraemos el idRol desde el cuerpo de la solicitud
         String idRolStr = String.valueOf(body.get("idRol"));
         // Validación para asegurarse de que idRol es numérico
@@ -117,10 +119,10 @@ public class RolesControlador {
         }
         Long idRol = Long.valueOf(idRolStr);
         // Llamamos al negocio para eliminar el rol
-        String result = rolesNegocio.eliminarRol(idRol);
-        if (result.contains("no existe")) {
+        String DeleteRol = rolesNegocio.eliminarRol(idRol);
+        if (DeleteRol.contains("no existe")) {
             return ResponseEntity.badRequest().body("El rol con el ID " + idRol + " no existe.");
         }
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(DeleteRol);
     }
 }

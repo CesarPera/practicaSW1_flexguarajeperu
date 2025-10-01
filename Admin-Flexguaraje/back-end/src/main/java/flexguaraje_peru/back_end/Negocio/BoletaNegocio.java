@@ -36,7 +36,6 @@ public class BoletaNegocio {
     private AlquileresRepositorio alquileresRepositorio;
 
     public boolean existeDni(String dni) {
-        // Consulta en el repositorio ClienteRepositorio para verificar si el DNI existe
         return clienteRepositorio.existsByDni(dni); // Supone que tienes un método existsByDni en ClienteRepositorio
     }
     // Método para validar DNI
@@ -196,4 +195,3 @@ public class BoletaNegocio {
         return boletaRepositorio.save(boleta);
     }
 }
-

@@ -19,10 +19,10 @@ public class Solicitudes {
     private Cliente cliente;
 
     @Column(name = "codigo_solicitud", nullable = false, length = 15)
-    private String codigoSolicitud; // AUTOMATICO
+    private String codigoSolicitud;
 
     @Column(name = "fecha_solicitud", nullable = false)
-    private LocalDate fechaSolicitud; // AUTOMATICO
+    private LocalDate fechaSolicitud;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_solicitud", nullable = false, length = 15)

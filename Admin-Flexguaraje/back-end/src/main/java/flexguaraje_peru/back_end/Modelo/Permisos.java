@@ -7,6 +7,7 @@ import jakarta.persistence.*;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "nombre_permiso")})
 public class Permisos {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_permiso")

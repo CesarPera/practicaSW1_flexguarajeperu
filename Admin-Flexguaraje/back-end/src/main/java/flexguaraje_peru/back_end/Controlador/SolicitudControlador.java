@@ -4,7 +4,6 @@ import flexguaraje_peru.back_end.Modelo.Cliente;
 import flexguaraje_peru.back_end.Modelo.Solicitudes;
 import flexguaraje_peru.back_end.Negocio.SolicitudNegocio;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +20,8 @@ public class SolicitudControlador {
     private SolicitudNegocio solicitudNegocio;
 
     @GetMapping("/listar_solicitud")
-    public ResponseEntity<List<Solicitudes>> listarSolicitudes() {
-        try {
-            List<Solicitudes> solicitudes = solicitudNegocio.listarSolicitudes();
-            return ResponseEntity.ok(solicitudes);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
+    public List<Solicitudes> listarSolicitudes() {
+        return solicitudNegocio.listarSolicitudes();
     }
 
     @PostMapping("/buscar_dni_solicitud")
@@ -44,17 +38,18 @@ public class SolicitudControlador {
 
         // Validar que el DNI esté presente y tenga 8 dígitos
         if (dni == null || dni.trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("El campo DNI es obligatorio.");
+            return ResponseEntity.badRequest().body("El campo DNI es obligatorio.");
         }
+
         if (dni.length() != 8 || !dni.matches("\\d{8}")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("El DNI debe tener exactamente 8 dígitos numéricos.");
+            return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 dígitos numéricos.");
         }
+
         // Validar si el código tiene exactamente 15 caracteres
         if (codigoSolicitud == null || codigoSolicitud.length() != 15) {
             return ResponseEntity.badRequest().body("El código de solicitud debe tener exactamente 15 caracteres.");
         }
+
         if (!codigoSolicitud.matches("^SLT-\\d{11}$")) {
             return ResponseEntity.badRequest().body("El código de solicitud debe seguir el formato correspondiente. EJEMPLO: SLT-12345678901");
         }
@@ -70,13 +65,12 @@ public class SolicitudControlador {
             }
             return ResponseEntity.ok(List.of(solicitud)); // Devuelve la solicitud en una lista
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No se encontró ninguna solicitud con el código proporcionado.");
+            return ResponseEntity.badRequest().body("No se encontró ninguna solicitud con el código proporcionado.");
         }
     }
 
     @PostMapping("/crear_solicitud")
-    public ResponseEntity<Object> crearSolicitud(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> crearSolicitud(@RequestBody Map<String, Object> body) {
         try {
             // Capturar datos
             String dniCliente = body.get("dniCliente").toString();
@@ -200,19 +194,19 @@ public class SolicitudControlador {
                         tipoSolicitud.toString(), categoria, cliente, descripcion, prioridad, estado, subestado
                 );
 
-                return ResponseEntity.status(201).body(Map.of("message", "Solicitud creada exitosamente", "idSolicitud", solicitudCreada.getIdSolicitud()));
+                return ResponseEntity.ok(solicitudCreada);
 
             } catch (Exception e) {
-                return ResponseEntity.status(500).body(Map.of("message", "Error al crear la solicitud", "error", e.getMessage()));
+                return ResponseEntity.badRequest().body("Error al crear la solicitud:" + e.getMessage());
             }
 
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("message", "Error al procesar la solicitud", "error", e.getMessage()));
+            return ResponseEntity.badRequest().body("Error al procesar la solicitud: " + e.getMessage());
         }
     }
 
     @PutMapping("/actualizar_solicitud")
-    public ResponseEntity<Object> actualizarSolicitud(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> actualizarSolicitud(@RequestBody Map<String, Object> body) {
         try {
             // Obtener el codigo_solicitud desde el body
             if (!body.containsKey("codigoSolicitud") || body.get("codigoSolicitud") == null || body.get("codigoSolicitud").toString().trim().isEmpty()) {
@@ -269,16 +263,15 @@ public class SolicitudControlador {
             // Guardar la solicitud actualizada
             Solicitudes solicitudActualizada = solicitudNegocio.actualizarSolicitud(solicitud);
 
-            return ResponseEntity.ok(Map.of("message", "Solicitud actualizada exitosamente", "idSolicitud", solicitudActualizada.getIdSolicitud()));
+            return ResponseEntity.ok(solicitudActualizada);
 
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("message", "Error al actualizar la solicitud", "error", e.getMessage()));
+            return ResponseEntity.badRequest().body("Error al actualizar la solicitud: " +  e.getMessage());
         }
     }
 
-
     @PostMapping("/responder_solicitud")
-    public ResponseEntity<Object> crearRespuesta(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> crearRespuesta(@RequestBody Map<String, Object> body) {
         try {
             String codigoSolicitud = body.get("codigoSolicitud").toString();
             String respuesta = body.get("respuesta").toString();
@@ -314,9 +307,9 @@ public class SolicitudControlador {
             // Guardar la solicitud actualizada
             Solicitudes solicitudActualizada = solicitudNegocio.actualizarSolicitud(solicitud);
 
-            return ResponseEntity.ok(Map.of("message", "Datos registrados correctamente", "idSolicitud", solicitudActualizada.getIdSolicitud()));
+            return ResponseEntity.ok(solicitudActualizada);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("message", "Error al registrar la respuesta", "error", e.getMessage()));
+            return ResponseEntity.badRequest().body("Error al registrar la respuesta: " + e.getMessage());
         }
     }
 }

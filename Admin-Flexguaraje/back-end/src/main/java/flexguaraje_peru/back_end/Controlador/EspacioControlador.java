@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/espacios")
 public class EspacioControlador {
+
     @Autowired
     private EspacioNegocio espacioNegocio;
 

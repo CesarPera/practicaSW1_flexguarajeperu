@@ -9,6 +9,7 @@ import jakarta.persistence.*;
                 @UniqueConstraint(columnNames = "email")
 })
 public class Cuenta {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cuenta")

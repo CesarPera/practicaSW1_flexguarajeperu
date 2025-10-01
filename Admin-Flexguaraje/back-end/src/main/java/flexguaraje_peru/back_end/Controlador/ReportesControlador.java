@@ -56,7 +56,7 @@ public class ReportesControlador {
             );
             return ResponseEntity.ok(nuevoReporte);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
     }
 
@@ -79,8 +79,9 @@ public class ReportesControlador {
         try {
             Reportes reporte = reportesNegocio.buscarPorCodigo(codigoReporte);
             return ResponseEntity.ok(reporte);
+
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
     }
 
@@ -101,8 +102,9 @@ public class ReportesControlador {
                     estado
             );
             return ResponseEntity.ok(reporteActualizado);
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
     }
 
@@ -111,11 +113,13 @@ public class ReportesControlador {
         try {
             String codigoReporte = requestBody.get("codigoReporte");
             String respuesta = requestBody.get("respuesta");
+
             Reportes.SubestadoR subestado = Reportes.SubestadoR.valueOf(requestBody.get("subestado"));
             Reportes reporteActualizado = reportesNegocio.responderReporte(codigoReporte, respuesta, subestado);
             return ResponseEntity.ok(reporteActualizado);
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Ocurrio un error: " + e.getMessage());
         }
     }
 }
